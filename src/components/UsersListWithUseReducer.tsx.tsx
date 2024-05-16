@@ -33,8 +33,15 @@ const reducer = (state: User[], action: ActionType) => {
       return [...state, action.payload];
     case Action.DELETE_USER: // { id: number }
       return state.filter((user) => user.id !== action.payload?.id);
+    case Action.MODIFY_USER:
+      return state.map((user) => {
+        if (user.id === action.payload?.id) {
+          return { ...user, user: action.payload };
+        }
+        return user;
+      });
+
     default:
-      // TODO:
       return state;
   }
   return state;
@@ -50,11 +57,24 @@ export const UsersListWithReducer = () => {
 
   const [state, dispatch] = useReducer(reducer, initialState);
 
+  // const handleFormData = (data: User) => {
+  //   dispatch({
+  //     type: Action.CREATE_USER,
+  //     payload: {
+  //       id: uuid4(),
+  //       age: data.age,
+  //       nickname: data.nickname,
+  //     },
+  //   });
+
+  //   console.log(data);
+  // };
+
   const handleFormData = (data: User) => {
     dispatch({
-      type: Action.CREATE_USER,
+      type: Action.MODIFY_USER,
       payload: {
-        id: uuid4(),
+        id: data.id,
         age: data.age,
         nickname: data.nickname,
       },
@@ -73,9 +93,17 @@ export const UsersListWithReducer = () => {
   };
 
   const editUser = (id: string) => {
-    const specifUser: User = users.find((user) => user.id === id);
-    setValue("age", specifUser.age);
-    setValue("nickname", specifUser.nickname);
+    const specificUser: User = users.find((user) => user.id === id);
+    setValue("age", specificUser.age);
+    setValue("nickname", specificUser.nickname);
+
+    handleFormData(specificUser);
+    // dispatch({
+    //   type: Action.MODIFY_USER,
+    //   payload: {
+    //     id: id,
+    //   },
+    // });
   };
 
   return (
@@ -89,7 +117,9 @@ export const UsersListWithReducer = () => {
       </form>
       {state.map((user) => (
         <>
-          <div key={user.id}>{user.nickname}</div>
+          <div key={user.id}>
+            {user.age} {user.nickname}
+          </div>
           <button onClick={() => deleteUser(user.id)}>Delete User</button>
           <button onClick={() => editUser(user.id)}>Edit User</button>
         </>
