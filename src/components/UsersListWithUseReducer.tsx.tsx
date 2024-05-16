@@ -1,4 +1,4 @@
-import { useReducer } from "react";
+import { useReducer, useState } from "react";
 import { users, type User } from "./data";
 import { v4 as uuid4 } from "uuid";
 import { useForm } from "react-hook-form";
@@ -36,7 +36,7 @@ const reducer = (state: User[], action: ActionType) => {
     case Action.MODIFY_USER:
       return state.map((user) => {
         if (user.id === action.payload?.id) {
-          return { ...user, user: action.payload };
+          return action.payload;
         }
         return user;
       });
@@ -48,6 +48,7 @@ const reducer = (state: User[], action: ActionType) => {
 };
 
 export const UsersListWithReducer = () => {
+  // const [UserId, setUserId] = useState("");
   const {
     register,
     handleSubmit,
@@ -97,13 +98,7 @@ export const UsersListWithReducer = () => {
     setValue("age", specificUser.age);
     setValue("nickname", specificUser.nickname);
 
-    handleFormData(specificUser);
-    // dispatch({
-    //   type: Action.MODIFY_USER,
-    //   payload: {
-    //     id: id,
-    //   },
-    // });
+    // setUserId(id);
   };
 
   return (
